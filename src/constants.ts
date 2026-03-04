@@ -6,7 +6,6 @@ export const progressStyles = [
   { id: 'arrow', name: 'Arrow', filled: '▰', empty: '▱', preview: '▰▰▰▱▱' },
   { id: 'emoji', name: 'Emoji', filled: '🟢', empty: '⚪', preview: '🟢🟢🟢⚪⚪' },
   { id: 'braille', name: 'Braille', filled: '⣿', empty: '⣀', preview: '⣿⣿⣿⣀⣀' },
-  { id: 'block', name: 'Block', filled: '█', empty: '░', preview: '███░░' },
   { id: 'star', name: 'Stars', filled: '★', empty: '☆', preview: '★★★☆☆' },
   { id: 'square', name: 'Square', filled: '■', empty: '□', preview: '■■■□□' },
   { id: 'fire', name: 'Fire', filled: '🔥', empty: '🔥', preview: '🔥🔥🔥🔥🔥' },
