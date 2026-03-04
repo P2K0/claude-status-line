@@ -86,7 +86,7 @@ export function LeftPanel() {
               <span style={{ color: cPreset.bar }}>
                 {pStyle.filled.repeat(3)}
                 <span className="opacity-40">
-                  {'gradient' in pStyle && (pStyle as any).gradient ? '▓▒░░░░' : pStyle.empty.repeat(6)}
+                  {'gradient' in pStyle && (pStyle as any).gradient ? '▓▒░░░░░' : pStyle.empty.repeat(7)}
                 </span>
                 {' 32%'}
               </span>

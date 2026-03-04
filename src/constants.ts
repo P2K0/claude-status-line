@@ -9,7 +9,7 @@ export const progressStyles = [
   { id: 'block', name: 'Block', filled: '█', empty: '░', preview: '███░░' },
   { id: 'star', name: 'Stars', filled: '★', empty: '☆', preview: '★★★☆☆' },
   { id: 'square', name: 'Square', filled: '■', empty: '□', preview: '■■■□□' },
-  { id: 'fire', name: 'Fire', filled: '🔥', empty: '·', preview: '🔥🔥🔥··' },
+  { id: 'fire', name: 'Fire', filled: '🔥', empty: '➖', preview: '🔥🔥🔥➖➖' },
 ]
 
 export const colorPresets = [
