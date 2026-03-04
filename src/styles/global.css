@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body {
+    @apply antialiased select-none;
+    -webkit-user-drag: none;
+    user-drag: none;
+    overscroll-behavior: none;
+    overflow: hidden; 
+    height: 100%;
+    width: 100%;
+    position: fixed; 
+  }
+
+  img, a {
+    -webkit-user-drag: none;
+    user-drag: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  .vercel-scroll::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .vercel-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .vercel-scroll::-webkit-scrollbar-thumb {
+    @apply bg-zinc-200 dark:bg-zinc-800 rounded-full;
+  }
+  .vercel-scroll::-webkit-scrollbar-thumb:hover {
+    @apply bg-zinc-300 dark:bg-zinc-700;
+  }
+
+  .focus-ring {
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-black/20 dark:focus-visible:ring-white/20;
+  }
+}
+
+@layer components {
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .animate-fade-in {
+    animation: fade-in 0.15s ease-out forwards;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+  .animate-blink {
+    animation: blink 1.2s step-end infinite;
+  }
+
+  .transition-fast {
+    @apply transition-none;
+  }
+}
