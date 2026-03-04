@@ -63,8 +63,6 @@
     "星星": "Stars",
     "Square": "Square",
     "方形": "Square",
-    "Fire": "Fire",
-    "火焰": "Fire",
     "Static": "Static",
     "固定": "Static",
     "使用主题 bar 色": "Use theme bar color",
@@ -98,6 +96,17 @@
     "进度条/Token 在上，路径/Git 在下": "Bar/Token above, Path/Git below",
     "Single": "Single",
     "单行": "Single",
-    "[Opus] ▓▓░ 32% ~/proj (main) +3 ~2": "[Opus] ▓▓░ 32% ~/proj (main) +3 ~2"
+    "[Opus] ▓▓░ 32% ~/proj (main) +3 ~2": "[Opus] ▓▓░ 32% ~/proj (main) +3 ~2",
+    "Zelda Life": "Zelda Life",
+    "Moon Phase": "Moon Phase",
+    "Cyberpunk": "Cyberpunk",
+    "Pac-Man": "Pac-Man",
+    " (Nerd)": " (Nerd)",
+    "Terminal": "Terminal",
+    " (Nerd)": " (Nerd)",
+    "🐙": "🐙",
+    "软箭头": "Soft Angle",
+    "硬箭头": "Solid Angle",
+    "像素风": "Pixeled"
   }
 }

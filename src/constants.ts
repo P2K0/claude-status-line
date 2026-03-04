@@ -8,7 +8,8 @@ export const progressStyles = [
   { id: 'braille', name: 'Braille', filled: '⣿', empty: '⣀', preview: '⣿⣿⣿⣀⣀' },
   { id: 'star', name: 'Stars', filled: '★', empty: '☆', preview: '★★★☆☆' },
   { id: 'square', name: 'Square', filled: '■', empty: '□', preview: '■■■□□' },
-  { id: 'fire', name: 'Fire', filled: '🔥', empty: '🔥', preview: '🔥🔥🔥🔥🔥' },
+  { id: 'heart', name: 'Zelda Life', filled: '❤️', empty: '🖤', preview: '❤️❤️❤️🖤🖤' },
+  { id: 'moon', name: 'Moon Phase', filled: '🌕', empty: '🌑', preview: '🌕🌕🌕🌑🌑' },
 ]
 
 export const colorPresets = [
@@ -233,6 +234,8 @@ export const dirPrefixes = [
   { id: 'dollar', name: '$', char: '$' },
   { id: 'home', name: '🏠', char: '🏠' },
   { id: 'tilde', name: '~/', char: '~/' },
+  { id: 'nerd-folder', name: ' (Nerd)', char: ' ' },
+  { id: 'terminal', name: 'Terminal', char: 'tty ' },
 ]
 
 export const tokenFormats = [
@@ -248,6 +251,8 @@ export const gitPrefixes = [
   { id: 'branch', name: '⎇', char: '⎇ ' },
   { id: 'on', name: 'on', char: 'on ' },
   { id: 'merge', name: '🔀', char: '🔀' },
+  { id: 'nerd-branch', name: ' (Nerd)', char: ' ' },
+  { id: 'octocat', name: '🐙', char: '🐙 ' },
 ]
 
 export const gitModes = [
@@ -267,6 +272,9 @@ export const separators = [
   { id: 'pipe', name: '管道', char: ' │ ', preview: '[Opus] │ ▓▓░ │ 32%' },
   { id: 'dot', name: '点', char: ' · ', preview: '[Opus] · ▓▓░ · 32%' },
   { id: 'angle', name: '箭头', char: ' › ', preview: '[Opus] › ▓▓░ › 32%' },
+  { id: 'powerline', name: '软箭头', char: '  ', preview: '[Opus]  ▓▓░  32%' },
+  { id: 'powerline-solid', name: '硬箭头', char: '  ', preview: '[Opus]  ▓▓░  32%' },
+  { id: 'pixel', name: '像素风', char: ' ░ ', preview: '[Opus] ░ ▓▓░ ░ 32%' },
 ]
 
 export const modelFormats = [
