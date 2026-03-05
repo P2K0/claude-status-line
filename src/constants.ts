@@ -1,4 +1,15 @@
-export const progressStyles = [
+import type {
+  BasicOption,
+  CharacterOption,
+  ColorPreset,
+  ConfigState,
+  PreviewOption,
+  ProgressStyle,
+  TemplateOption,
+} from '@/types'
+import { PreviewModeEnum } from '@/types'
+
+export const progressStyles: ProgressStyle[] = [
   { id: 'classic', name: 'Classic', filled: '▓', empty: '░', preview: '▓▓▓░░' },
   { id: 'gradient', name: 'Gradient', filled: '█', empty: '▓▒░', preview: '███▓▒░', gradient: true },
   { id: 'diamond', name: 'Diamond', filled: '◆', empty: '◇', preview: '◆◆◆◇◇' },
@@ -12,8 +23,7 @@ export const progressStyles = [
   { id: 'moon', name: 'Moon Phase', filled: '🌕', empty: '🌑', preview: '🌕🌕🌕🌑🌑' },
 ]
 
-export const colorPresets = [
-
+export const colorPresets: ColorPreset[] = [
   {
     id: 'dracula',
     name: 'Dracula',
@@ -86,7 +96,6 @@ export const colorPresets = [
     bar: '#61afef',
     ansi: { model: 176, low: 114, mid: 180, high: 168, token: 145, bar: 75 },
   },
-
   {
     id: 'everforest',
     name: 'Everforest',
@@ -171,7 +180,6 @@ export const colorPresets = [
     bar: '#f09483',
     ansi: { model: 38, low: 48, mid: 216, high: 204, token: 60, bar: 210 },
   },
-
   {
     id: 'github-light',
     name: 'GitHub Light',
@@ -196,7 +204,6 @@ export const colorPresets = [
     bar: '#268bd2',
     ansi: { model: 62, low: 106, mid: 136, high: 160, token: 66, bar: 33 },
   },
-
   {
     id: 'mono-dark',
     name: 'Mono Dark',
@@ -223,7 +230,7 @@ export const colorPresets = [
   },
 ]
 
-export const dirPrefixes = [
+export const dirPrefixes: CharacterOption[] = [
   { id: 'none', name: '无', char: '' },
   { id: 'folder', name: '📁', char: '📁' },
   { id: 'bolt', name: '⚡', char: '⚡' },
@@ -238,13 +245,13 @@ export const dirPrefixes = [
   { id: 'terminal', name: 'Terminal', char: 'tty ' },
 ]
 
-export const tokenFormats = [
+export const tokenFormats: TemplateOption[] = [
   { id: 'full', name: '完整', template: 'Total: input {in}k / output {out}k' },
   { id: 'compact', name: '紧凑', template: '↑{in}k ↓{out}k' },
   { id: 'minimal', name: '简约', template: 'in:{in}k out:{out}k' },
 ]
 
-export const gitPrefixes = [
+export const gitPrefixes: CharacterOption[] = [
   { id: 'none', name: '无', char: '' },
   { id: 'leaf', name: '🌿', char: '🌿' },
   { id: 'git', name: 'git:', char: 'git:' },
@@ -255,19 +262,19 @@ export const gitPrefixes = [
   { id: 'octocat', name: '🐙', char: '🐙 ' },
 ]
 
-export const gitModes = [
+export const gitModes: PreviewOption[] = [
   { id: 'minimal', name: '极简', preview: '+3 ~2 ?1' },
   { id: 'short', name: '短标', preview: 'A3 M2 ?1' },
   { id: 'detailed', name: '详细', preview: '3 new, 2 modified' },
 ]
 
-export const barColorModes = [
+export const barColorModes: BasicOption[] = [
   { id: 'static', name: '固定', description: '使用主题 bar 色' },
   { id: 'dynamic', name: '动态', description: '低→绿 中→黄 高→红' },
   { id: 'gradient', name: '渐变', description: '冷蓝到暖红过渡' },
 ]
 
-export const separators = [
+export const separators: BasicOption[] = [
   { id: 'space', name: '空格', char: '  ', preview: '[Opus]  ▓▓░  32%' },
   { id: 'pipe', name: '管道', char: ' │ ', preview: '[Opus] │ ▓▓░ │ 32%' },
   { id: 'dot', name: '点', char: ' · ', preview: '[Opus] · ▓▓░ · 32%' },
@@ -277,39 +284,24 @@ export const separators = [
   { id: 'pixel', name: '像素风', char: ' ░ ', preview: '[Opus] ░ ▓▓░ ░ 32%' },
 ]
 
-export const modelFormats = [
+export const modelFormats: BasicOption[] = [
   { id: 'short', name: 'Short', example: 'Opus 4.6' },
   { id: 'full', name: 'Full', example: 'Claude Opus 4.6' },
   { id: 'abbr', name: 'Abbr', example: 'OPUS' },
   { id: 'icon', name: 'Icon', example: '🤖 Opus' },
 ]
 
-export const layoutModes = [
+export const layoutModes: BasicOption[] = [
   { id: 'double', name: '双行', description: '进度条/Token 在上，路径/Git 在下' },
   { id: 'single', name: '单行', description: '[Opus] ▓▓░ 32% ~/proj (main) +3 ~2' },
 ]
-
-export interface ConfigState {
-  progressStyle: string
-  colorPreset: string
-  dirPrefix: string
-  tokenFormat: string
-  previewMode: 'dark' | 'light'
-  gitShow: boolean
-  gitPrefix: string
-  gitMode: string
-  barColorMode: string
-  separator: string
-  modelFormat: string
-  layoutMode: string
-}
 
 export const defaultConfig: ConfigState = {
   progressStyle: 'classic',
   colorPreset: 'dracula',
   dirPrefix: 'none',
   tokenFormat: 'full',
-  previewMode: 'dark',
+  previewMode: PreviewModeEnum.Dark,
   gitShow: true,
   gitPrefix: 'none',
   gitMode: 'minimal',

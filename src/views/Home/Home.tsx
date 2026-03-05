@@ -1,11 +1,12 @@
 import { useConfig } from '@/hooks/useConfig'
+import { PreviewModeEnum } from '@/types'
 import { Header } from '@/views/Home/components/Header/Header'
 import { LeftPanel } from '@/views/Home/components/LeftPanel/LeftPanel'
 import { RightPanel } from '@/views/Home/components/RightPanel/RightPanel'
 
 export default function App() {
   const { config } = useConfig()
-  const isLight = config.previewMode === 'light'
+  const isLight = config.previewMode === PreviewModeEnum.Light
 
   return (
     <div

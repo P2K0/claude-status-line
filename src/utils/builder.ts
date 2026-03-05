@@ -1,4 +1,4 @@
-import type { ConfigState } from '@/constants'
+import type { ConfigState } from '@/types'
 import {
   colorPresets,
   dirPrefixes,
@@ -105,9 +105,6 @@ export function generateScript(state: ConfigState): string {
   const a = color.ansi
 
   const script = `
-
-
-
 JSON_INPUT=$(cat)
 
 model=$(echo "$JSON_INPUT" | jq -r '.model.display_name // "Claude"')

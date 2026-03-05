@@ -1,6 +1,6 @@
+import type { CSSProperties } from 'react'
 import { Copy, PlusCircle } from 'lucide-react'
 import { useState } from 'react'
-
 import {
   colorPresets,
   dirPrefixes,
@@ -11,13 +11,14 @@ import {
 } from '@/constants'
 import { useConfig } from '@/hooks/useConfig'
 import { useLanguage } from '@/hooks/useLanguage'
+import { PreviewModeEnum } from '@/types'
 import { generateScript } from '@/utils/builder'
 
 export function LeftPanel() {
   const { config } = useConfig()
   const { t } = useLanguage()
   const [copied, setCopied] = useState(false)
-  const isLight = config.previewMode === 'light'
+  const isLight = config.previewMode === PreviewModeEnum.Light
 
   const pStyle = progressStyles.find(s => s.id === config.progressStyle) || progressStyles[0]
   const cPreset = colorPresets.find(c => c.id === config.colorPreset) || colorPresets[0]
@@ -26,7 +27,6 @@ export function LeftPanel() {
 
   const handleCopy = () => {
     const scriptContent = generateScript(config)
-    // 编码脚本本体
     const b64 = btoa(unescape(encodeURIComponent(scriptContent)))
 
     const configPy = `
@@ -81,7 +81,7 @@ json.dump(s, open(p, "w"), indent=2, ensure_ascii=False)
   const sepItem = separators.find(s => s.id === config.separator)
   const sepNode = sepItem && sepItem.id !== 'space' ? <span className="opacity-40">{sepItem.char}</span> : null
 
-  let barColorStyle: any = { color: cPreset.bar }
+  let barColorStyle: CSSProperties = { color: cPreset.bar }
   if (config.barColorMode === 'dynamic') {
     barColorStyle = { color: cPreset.low }
   }
@@ -89,7 +89,6 @@ json.dump(s, open(p, "w"), indent=2, ensure_ascii=False)
     barColorStyle = {
       backgroundImage: `linear-gradient(90deg, ${cPreset.low}, ${cPreset.high})`,
       WebkitBackgroundClip: 'text',
-      WebkitTextFillColor: 'transparent',
       color: 'transparent',
     }
   }
@@ -137,8 +136,8 @@ json.dump(s, open(p, "w"), indent=2, ensure_ascii=False)
 
           <div className={`flex items-center px-4 py-3 border-b ${isLight ? 'bg-zinc-50 border-zinc-200' : 'bg-zinc-900/30 border-zinc-800'}`}>
             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`lucide lucide-terminal ${isLight ? 'text-zinc-500' : 'text-zinc-600'}`}>
-              <polyline points="4 17 10 11 4 5"></polyline>
-              <line x1="12" x2="20" y1="19" y2="19"></line>
+              <polyline points="4 17 10 11 4 5" />
+              <line x1="12" x2="20" y1="19" y2="19" />
             </svg>
             <span className={`ml-2 text-xs font-mono font-medium ${isLight ? 'text-zinc-600' : 'text-zinc-400'}`}>
               ~/claude-code
@@ -164,7 +163,7 @@ json.dump(s, open(p, "w"), indent=2, ensure_ascii=False)
               <span style={barColorStyle}>
                 {pStyle.filled.repeat(3)}
                 <span className="opacity-40">
-                  {'gradient' in pStyle && (pStyle as any).gradient ? '▓▒░░░░░' : pStyle.empty.repeat(7)}
+                  {'gradient' in pStyle && pStyle.gradient ? '▓▒░░░░░' : pStyle.empty.repeat(7)}
                 </span>
                 {' 32%'}
               </span>
@@ -196,7 +195,7 @@ json.dump(s, open(p, "w"), indent=2, ensure_ascii=False)
                     {gitDisplay}
                   </span>
 
-                  <span className={`inline-block w-[6px] h-[13px] ml-1.5 align-middle animate-blink ${isLight ? 'bg-black' : 'bg-white'}`} style={{ animation: 'blink 1.2s step-end infinite' }}></span>
+                  <span className={`inline-block w-[6px] h-[13px] ml-1.5 align-middle animate-blink ${isLight ? 'bg-black' : 'bg-white'}`} style={{ animation: 'blink 1.2s step-end infinite' }} />
                 </>
               )}
             </div>
@@ -221,7 +220,7 @@ json.dump(s, open(p, "w"), indent=2, ensure_ascii=False)
                   {gitDisplay}
                 </span>
 
-                <span className={`inline-block w-[6px] h-[13px] ml-1.5 align-middle animate-blink ${isLight ? 'bg-black' : 'bg-white'}`} style={{ animation: 'blink 1.2s step-end infinite' }}></span>
+                <span className={`inline-block w-[6px] h-[13px] ml-1.5 align-middle animate-blink ${isLight ? 'bg-black' : 'bg-white'}`} style={{ animation: 'blink 1.2s step-end infinite' }} />
               </div>
             )}
           </div>

@@ -1,3 +1,9 @@
+import type {
+  GridBtnProps,
+  ListBtnProps,
+  SectionGroupProps,
+  SectionItemProps,
+} from '@/types'
 import {
   barColorModes,
   colorPresets,
@@ -11,10 +17,9 @@ import {
   tokenFormats,
 } from '@/constants'
 import { useConfig } from '@/hooks/useConfig'
-
 import { useLanguage } from '@/hooks/useLanguage'
 
-function SectionGroup({ title, children, isLight }: Readonly<{ title: string, children: React.ReactNode, isLight?: boolean }>) {
+function SectionGroup({ title, children, isLight }: Readonly<SectionGroupProps>) {
   return (
     <div className="mb-8">
       <h2 className={`text-[11px] font-bold uppercase tracking-[0.18em] mb-3 ${isLight ? 'text-zinc-800' : 'text-zinc-100'}`}>{title}</h2>
@@ -23,7 +28,7 @@ function SectionGroup({ title, children, isLight }: Readonly<{ title: string, ch
   )
 }
 
-function SectionItem({ title, desc, children, isLight, noBorder }: Readonly<{ title: string, desc?: string, children: React.ReactNode, isLight?: boolean, noBorder?: boolean }>) {
+function SectionItem({ title, desc, children, isLight, noBorder }: Readonly<SectionItemProps>) {
   let borderClass = ''
   if (!noBorder) {
     borderClass = isLight ? 'border-b border-zinc-200' : 'border-b border-zinc-800/60'
@@ -40,51 +45,36 @@ function SectionItem({ title, desc, children, isLight, noBorder }: Readonly<{ ti
   )
 }
 
-interface GridBtnProps {
-  active: boolean
-  onClick: () => void
-  label: string | React.ReactNode
-  subLabel?: string | React.ReactNode
-  isLight?: boolean
-  variant?: 'inverted' | 'hollow'
-}
-
-function GridBtn({ active, onClick, label, subLabel, isLight, variant = 'inverted' }: Readonly<GridBtnProps>) {
-  const base = 'px-3 py-2.5 rounded-md border text-xs font-medium flex flex-col items-center justify-center gap-0.5 cursor-pointer h-full transition-colors auto-rows-fr'
-  let stateClass = ''
-
-  if (active && variant === 'inverted') {
-    stateClass = isLight
-      ? 'bg-zinc-900 text-white border-zinc-700 shadow-sm'
-      : 'bg-zinc-100 text-zinc-900 border-zinc-300 shadow-sm'
-  }
-  else if (active) {
-    stateClass = isLight
+function getGridBtnStyle(active: boolean, isLight: boolean, variant: 'inverted' | 'hollow') {
+  if (active) {
+    if (variant === 'inverted') {
+      return isLight
+        ? 'bg-zinc-900 text-white border-zinc-700 shadow-sm'
+        : 'bg-zinc-100 text-zinc-900 border-zinc-300 shadow-sm'
+    }
+    return isLight
       ? 'bg-zinc-100 text-zinc-900 border-zinc-300 shadow-sm'
       : 'bg-zinc-800 border-zinc-600 ring-1 ring-zinc-500 text-zinc-100'
   }
-  else if (variant === 'inverted') {
-    stateClass = isLight
+
+  if (variant === 'inverted') {
+    return isLight
       ? 'bg-white text-zinc-500 border-zinc-200 hover:border-zinc-400 hover:text-zinc-800'
       : 'bg-transparent text-zinc-400 border-zinc-800 hover:border-zinc-600 hover:text-zinc-200'
   }
-  else {
-    stateClass = isLight
-      ? 'bg-white text-zinc-500 border-zinc-200 hover:border-zinc-400 hover:text-zinc-800'
-      : 'bg-zinc-900/20 border-zinc-800 hover:border-zinc-700 hover:bg-zinc-900/30 text-zinc-400'
-  }
 
+  return isLight
+    ? 'bg-white text-zinc-500 border-zinc-200 hover:border-zinc-400 hover:text-zinc-800'
+    : 'bg-zinc-900/20 border-zinc-800 hover:border-zinc-700 hover:bg-zinc-900/30 text-zinc-400'
+}
+
+function GridBtn({ active, onClick, label, subLabel, isLight = false, variant = 'inverted' }: Readonly<GridBtnProps>) {
+  const base = 'px-3 py-2.5 rounded-md border text-xs font-medium flex flex-col items-center justify-center gap-0.5 cursor-pointer h-full transition-colors auto-rows-fr'
+  const stateClass = getGridBtnStyle(active, isLight, variant)
   const paddingClass = variant === 'hollow' && typeof label !== 'string' ? '!p-2.5 !rounded-lg' : ''
 
-  let labelClass = ''
-  if (variant === 'hollow' && active && !isLight) {
-    labelClass = 'text-zinc-200'
-  }
-
-  let subLabelClass = 'opacity-60 tracking-wide'
-  if (variant === 'hollow') {
-    subLabelClass = 'text-zinc-500'
-  }
+  const labelClass = variant === 'hollow' && active && !isLight ? 'text-zinc-200' : ''
+  const subLabelClass = variant === 'hollow' ? 'text-zinc-500' : 'opacity-60 tracking-wide'
 
   return (
     <button onClick={onClick} className={`${base} ${stateClass} ${paddingClass}`}>
@@ -96,7 +86,7 @@ function GridBtn({ active, onClick, label, subLabel, isLight, variant = 'inverte
   )
 }
 
-function ListBtn({ active, onClick, leftLabel, rightLabel, isLight }: Readonly<{ active: boolean, onClick: () => void, leftLabel: string, rightLabel: React.ReactNode, isLight?: boolean }>) {
+function ListBtn({ active, onClick, leftLabel, rightLabel, isLight }: Readonly<ListBtnProps>) {
   const base = 'w-full px-3 py-2.5 rounded-lg border text-left flex items-center justify-between cursor-pointer transition-colors'
   let stateClass = ''
 
@@ -138,9 +128,14 @@ export function RightPanel() {
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
               {progressStyles.map((s) => {
                 const isActive = config.progressStyle === s.id
-                const previewColor = isLight
-                  ? 'text-zinc-600'
-                  : (isActive ? 'text-zinc-200' : 'text-zinc-400')
+                let previewColor = ''
+                if (isLight) {
+                  previewColor = 'text-zinc-600'
+                }
+                else {
+                  previewColor = isActive ? 'text-zinc-200' : 'text-zinc-400'
+                }
+
                 return (
                   <GridBtn
                     key={s.id}

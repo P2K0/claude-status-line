@@ -1,6 +1,6 @@
 import * as React from 'react'
 import ReactDOM from 'react-dom/client'
-import { ConfigProvider } from '@/hooks/useConfig.tsx'
+import { ConfigProvider } from '@/hooks/ConfigProvider'
 import App from '@/views/Home/Home'
 import '@/styles/global.css'
 import '@/i18n/i18n'

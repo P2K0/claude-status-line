@@ -8,10 +8,10 @@
     -webkit-user-drag: none;
     user-drag: none;
     overscroll-behavior: none;
-    overflow: hidden; 
+    overflow: hidden;
     height: 100%;
     width: 100%;
-    position: fixed; 
+    position: fixed;
   }
 
   img, a {
@@ -36,12 +36,15 @@
     width: 6px;
     height: 6px;
   }
+
   .vercel-scroll::-webkit-scrollbar-track {
     background: transparent;
   }
+
   .vercel-scroll::-webkit-scrollbar-thumb {
     @apply bg-zinc-200 dark:bg-zinc-800 rounded-full;
   }
+
   .vercel-scroll::-webkit-scrollbar-thumb:hover {
     @apply bg-zinc-300 dark:bg-zinc-700;
   }
@@ -56,6 +59,7 @@
     from { opacity: 0; }
     to { opacity: 1; }
   }
+
   .animate-fade-in {
     animation: fade-in 0.15s ease-out forwards;
   }
@@ -64,6 +68,7 @@
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
   }
+
   .animate-blink {
     animation: blink 1.2s step-end infinite;
   }

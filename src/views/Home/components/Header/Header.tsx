@@ -1,11 +1,12 @@
 import { Github, Languages, Moon, Sun } from 'lucide-react'
 import { useConfig } from '@/hooks/useConfig'
 import { useLanguage } from '@/hooks/useLanguage'
+import { PreviewModeEnum } from '@/types'
 
 export function Header() {
   const { config, updateConfig } = useConfig()
   const { toggleLanguage } = useLanguage()
-  const isLight = config.previewMode === 'light'
+  const isLight = config.previewMode === PreviewModeEnum.Light
 
   return (
     <header className={`h-14 px-6 flex items-center justify-between border-b transition-colors duration-300
@@ -28,7 +29,7 @@ export function Header() {
         </button>
 
         <button
-          onClick={() => updateConfig('previewMode', isLight ? 'dark' : 'light')}
+          onClick={() => updateConfig('previewMode', isLight ? PreviewModeEnum.Dark : PreviewModeEnum.Light)}
           className={`p-2 rounded-lg transition-colors duration-200
             ${isLight ? 'text-zinc-600 hover:bg-zinc-100' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200'}`}
           aria-label="Toggle Theme"
