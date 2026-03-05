@@ -226,11 +226,11 @@ json.dump(s, open(p, "w"), indent=2, ensure_ascii=False)
           </div>
 
           <div className={`px-4 py-2 border-t text-[10px] font-mono flex gap-3 flex-wrap ${isLight ? 'bg-zinc-50 border-zinc-200 text-zinc-500' : 'bg-zinc-900/20 border-zinc-800/50 text-zinc-600'}`}>
-            <span>{t(`constants.${pStyle.name}`, pStyle.name)}</span>
+            <span>{t(`constants.${pStyle.name}`, { defaultValue: pStyle.name })}</span>
             <span>·</span>
-            <span>{t(`constants.${cPreset.name}`, cPreset.name)}</span>
+            <span>{t(`constants.${cPreset.name}`, { defaultValue: cPreset.name })}</span>
             <span>·</span>
-            <span>{t(`constants.${selectedPreviewLayout}`, selectedPreviewLayout)}</span>
+            <span>{t(`constants.${selectedPreviewLayout}`, { defaultValue: selectedPreviewLayout })}</span>
           </div>
         </div>
 

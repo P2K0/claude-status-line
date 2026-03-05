@@ -143,7 +143,7 @@ export function RightPanel() {
                     active={isActive}
                     onClick={() => updateConfig('progressStyle', s.id)}
                     label={<span className={`font-mono text-sm tracking-widest truncate w-full text-center transition-colors ${previewColor}`}>{s.preview}</span>}
-                    subLabel={t(`constants.${s.name}`, s.name)}
+                    subLabel={t(`constants.${s.name}`, { defaultValue: s.name })}
                     isLight={isLight}
                   />
                 )
@@ -158,8 +158,8 @@ export function RightPanel() {
                   key={c.id}
                   active={config.barColorMode === c.id}
                   onClick={() => updateConfig('barColorMode', c.id)}
-                  label={t(`constants.${c.name}`, c.name)}
-                  subLabel={t(`constants.${c.description}`, c.description)}
+                  label={t(`constants.${c.name}`, { defaultValue: c.name })}
+                  subLabel={c.description ? t(`constants.${c.description}`, { defaultValue: c.description }) : undefined}
                   isLight={isLight}
                 />
               ))}
@@ -226,8 +226,8 @@ export function RightPanel() {
                   key={m.id}
                   active={config.layoutMode === m.id}
                   onClick={() => updateConfig('layoutMode', m.id)}
-                  label={t(`constants.${m.name}`, m.name)}
-                  subLabel={t(`constants.${m.description}`, m.description)}
+                  label={t(`constants.${m.name}`, { defaultValue: m.name })}
+                  subLabel={m.description ? t(`constants.${m.description}`, { defaultValue: m.description }) : undefined}
                   isLight={isLight}
                 />
               ))}
@@ -247,7 +247,7 @@ export function RightPanel() {
                   key={sep.id}
                   active={config.separator === sep.id}
                   onClick={() => updateConfig('separator', sep.id)}
-                  leftLabel={t(`constants.${sep.name}`, sep.name)}
+                  leftLabel={t(`constants.${sep.name}`, { defaultValue: sep.name })}
                   rightLabel={sep.preview}
                   isLight={isLight}
                 />
@@ -262,7 +262,7 @@ export function RightPanel() {
                   key={fmt.id}
                   active={config.modelFormat === fmt.id}
                   onClick={() => updateConfig('modelFormat', fmt.id)}
-                  label={t(`constants.${fmt.name}`, fmt.name)}
+                  label={t(`constants.${fmt.name}`, { defaultValue: fmt.name })}
                   subLabel={fmt.example}
                   isLight={isLight}
                 />
@@ -278,7 +278,7 @@ export function RightPanel() {
                   active={config.dirPrefix === p.id}
                   onClick={() => updateConfig('dirPrefix', p.id)}
                   label={p.char || '∅'}
-                  subLabel={t(`constants.${p.name === '无' ? 'none' : p.name}`, p.name === '无' ? 'none' : p.name)}
+                  subLabel={t(`constants.${p.name === '无' ? 'none' : p.name}`, { defaultValue: p.name === '无' ? 'none' : p.name })}
                   isLight={isLight}
                 />
               ))}
@@ -292,7 +292,7 @@ export function RightPanel() {
                   key={tFmt.id}
                   active={config.tokenFormat === tFmt.id}
                   onClick={() => updateConfig('tokenFormat', tFmt.id)}
-                  label={t(`constants.${tFmt.name}`, tFmt.name)}
+                  label={t(`constants.${tFmt.name}`, { defaultValue: tFmt.name })}
                   subLabel={tFmt.template}
                   isLight={isLight}
                 />
@@ -312,7 +312,7 @@ export function RightPanel() {
                   active={config.gitPrefix === p.id}
                   onClick={() => updateConfig('gitPrefix', p.id)}
                   label={p.char || '∅'}
-                  subLabel={t(`constants.${p.name === '无' ? 'none' : p.name}`, p.name === '无' ? 'none' : p.name)}
+                  subLabel={t(`constants.${p.name === '无' ? 'none' : p.name}`, { defaultValue: p.name === '无' ? 'none' : p.name })}
                   isLight={isLight}
                 />
               ))}
@@ -328,7 +328,7 @@ export function RightPanel() {
                   key={m.id}
                   active={config.gitMode === m.id}
                   onClick={() => updateConfig('gitMode', m.id)}
-                  leftLabel={t(`constants.${m.name}`, m.name)}
+                  leftLabel={t(`constants.${m.name}`, { defaultValue: m.name })}
                   rightLabel={m.preview}
                   isLight={isLight}
                 />
