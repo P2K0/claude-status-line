@@ -3,11 +3,15 @@ import { useState } from 'react'
 
 import {
   colorPresets,
+  dirPrefixes,
+  gitPrefixes,
   layoutModes,
   progressStyles,
+  separators,
 } from '@/constants'
 import { useConfig } from '@/hooks/useConfig'
 import { useLanguage } from '@/hooks/useLanguage'
+import { generateScript } from '@/utils/builder'
 
 export function LeftPanel() {
   const { config } = useConfig()
@@ -21,8 +25,39 @@ export function LeftPanel() {
   const selectedPreviewLayout = layoutModes.find(m => m.id === config.layoutMode)?.name || '双行'
 
   const handleCopy = () => {
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    const scriptContent = generateScript(config)
+    // 编码脚本本体
+    const b64 = btoa(unescape(encodeURIComponent(scriptContent)))
+
+    const configPy = `
+import json, os
+p = os.path.expanduser("~/.claude/settings.json")
+s = json.load(open(p)) if os.path.exists(p) else {}
+raw_path = os.path.expanduser("~/.claude/statusline.sh")
+if "\\\\" in raw_path or (":" in raw_path and raw_path[1] == ":"):
+    if ":" in raw_path:
+        parts = raw_path.split(":")
+        drive = parts[0].lower()
+        path = parts[1].replace("\\\\", "/")
+        final_path = f"/{drive}{path}"
+    else:
+        final_path = raw_path.replace("\\\\", "/")
+    cmd = f"bash {final_path}"
+else:
+    cmd = raw_path
+
+s["statusLine"] = {"type": "command", "command": cmd}
+json.dump(s, open(p, "w"), indent=2, ensure_ascii=False)
+`.trim()
+
+    const configPyB64 = btoa(configPy)
+
+    const installCmd = `mkdir -p ~/.claude && echo '${b64}' | base64 -d > ~/.claude/statusline.sh && chmod +x ~/.claude/statusline.sh && echo '${configPyB64}' | base64 -d | python3 && echo 'Statusline installed!'`
+
+    navigator.clipboard.writeText(installCmd).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
   }
 
   let modelDisplay = 'Claude Opus 4.6'
@@ -39,6 +74,47 @@ export function LeftPanel() {
   }
   else if (config.tokenFormat === 'minimal') {
     tokenDisplay = 'in:216k out:15k'
+  }
+
+  const dirPfx = dirPrefixes.find(p => p.id === config.dirPrefix)?.char || ''
+  const gitPfx = gitPrefixes.find(p => p.id === config.gitPrefix)?.char || ''
+  const sepItem = separators.find(s => s.id === config.separator)
+  const sepNode = sepItem && sepItem.id !== 'space' ? <span className="opacity-40">{sepItem.char}</span> : null
+
+  let barColorStyle: any = { color: cPreset.bar }
+  if (config.barColorMode === 'dynamic') {
+    barColorStyle = { color: cPreset.low }
+  }
+  else if (config.barColorMode === 'gradient') {
+    barColorStyle = {
+      backgroundImage: `linear-gradient(90deg, ${cPreset.low}, ${cPreset.high})`,
+      WebkitBackgroundClip: 'text',
+      WebkitTextFillColor: 'transparent',
+      color: 'transparent',
+    }
+  }
+
+  let gitDisplay = (
+    <>
+      <span style={{ color: cPreset.high }}>✗</span>
+      <span style={{ color: cPreset.low }}>+3</span>
+      <span style={{ color: cPreset.mid }}>~2</span>
+      <span style={{ color: cPreset.token }}>?1</span>
+    </>
+  )
+  if (config.gitMode === 'short') {
+    gitDisplay = (
+      <>
+        <span style={{ color: cPreset.high }}>A3</span>
+        <span style={{ color: cPreset.mid }}>M2</span>
+        <span style={{ color: cPreset.token }}>?1</span>
+      </>
+    )
+  }
+  else if (config.gitMode === 'detailed') {
+    gitDisplay = (
+      <span style={{ color: cPreset.mid }}>3 new, 2 modified</span>
+    )
   }
 
   let btnClass = isLight
@@ -83,7 +159,9 @@ export function LeftPanel() {
                 ]
               </span>
 
-              <span style={{ color: cPreset.bar }}>
+              {sepNode}
+
+              <span style={barColorStyle}>
                 {pStyle.filled.repeat(3)}
                 <span className="opacity-40">
                   {'gradient' in pStyle && (pStyle as any).gradient ? '▓▒░░░░░' : pStyle.empty.repeat(7)}
@@ -91,22 +169,61 @@ export function LeftPanel() {
                 {' 32%'}
               </span>
 
+              {sepNode}
+
               <span style={{ color: cPreset.token }}>
                 {tokenDisplay}
               </span>
+
+              {config.layoutMode === 'single' && (
+                <>
+                  {sepNode}
+                  <span style={{ color: cPreset.low }}>
+                    {dirPfx && <span className="mr-1">{dirPfx}</span>}
+                    ~/claude-code
+                  </span>
+
+                  {sepNode}
+
+                  <span style={{ color: cPreset.mid }}>
+                    {gitPfx && <span className="mr-1">{gitPfx}</span>}
+                    (main)
+                  </span>
+
+                  {sepNode}
+
+                  <span className="flex items-center gap-1.5">
+                    {gitDisplay}
+                  </span>
+
+                  <span className={`inline-block w-[6px] h-[13px] ml-1.5 align-middle animate-blink ${isLight ? 'bg-black' : 'bg-white'}`} style={{ animation: 'blink 1.2s step-end infinite' }}></span>
+                </>
+              )}
             </div>
 
-            <div className="flex items-center flex-wrap gap-x-2 gap-y-1 mt-1">
-              <span style={{ color: cPreset.low }}>~/claude-code</span>
-              <span style={{ color: cPreset.mid }}>(main)</span>
+            {config.layoutMode !== 'single' && (
+              <div className="flex items-center flex-wrap gap-x-2 gap-y-1 mt-1">
+                <span style={{ color: cPreset.low }}>
+                  {dirPfx && <span className="mr-1">{dirPfx}</span>}
+                  ~/claude-code
+                </span>
 
-              <span style={{ color: cPreset.high }}>✗</span>
-              <span style={{ color: cPreset.low }}>+3</span>
-              <span style={{ color: cPreset.mid }}>~2</span>
-              <span style={{ color: cPreset.token }}>?1</span>
+                {sepNode}
 
-              <span className={`inline-block w-[6px] h-[13px] ml-1.5 align-middle animate-blink ${isLight ? 'bg-black' : 'bg-white'}`} style={{ animation: 'blink 1.2s step-end infinite' }}></span>
-            </div>
+                <span style={{ color: cPreset.mid }}>
+                  {gitPfx && <span className="mr-1">{gitPfx}</span>}
+                  (main)
+                </span>
+
+                {sepNode}
+
+                <span className="flex items-center gap-1.5">
+                  {gitDisplay}
+                </span>
+
+                <span className={`inline-block w-[6px] h-[13px] ml-1.5 align-middle animate-blink ${isLight ? 'bg-black' : 'bg-white'}`} style={{ animation: 'blink 1.2s step-end infinite' }}></span>
+              </div>
+            )}
           </div>
 
           <div className={`px-4 py-2 border-t text-[10px] font-mono flex gap-3 flex-wrap ${isLight ? 'bg-zinc-50 border-zinc-200 text-zinc-500' : 'bg-zinc-900/20 border-zinc-800/50 text-zinc-600'}`}>
