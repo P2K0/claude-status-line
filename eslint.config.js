@@ -11,7 +11,8 @@ export default antfu(
   },
   {
     ignores: [
-      '.pnpm-store',
+      '.agent',
+      '.agents',
       'dist',
       'node_modules',
       'PRD.md',
