@@ -20,13 +20,13 @@ export function generateScript(state: ConfigState): string {
 
   let tokenPrintf: string
   if (tFormat.id === 'full') {
-    tokenPrintf = `printf "\\\${SEP}\\\${TOKEN_COLOR}Total: input %sk / output %sk\\\${RESET}" "$input_k" "$output_k"`
+    tokenPrintf = String.raw`printf "\${SEP}\${TOKEN_COLOR}Total: input %sk / output %sk\${RESET}" "$input_k" "$output_k"`
   }
   else if (tFormat.id === 'compact') {
-    tokenPrintf = `printf "\\\${SEP}\\\${TOKEN_COLOR}↑%sk ↓%sk\\\${RESET}" "$input_k" "$output_k"`
+    tokenPrintf = String.raw`printf "\${SEP}\${TOKEN_COLOR}↑%sk ↓%sk\${RESET}" "$input_k" "$output_k"`
   }
   else {
-    tokenPrintf = `printf "\\\${SEP}\\\${TOKEN_COLOR}in:%sk out:%sk\\\${RESET}" "$input_k" "$output_k"`
+    tokenPrintf = String.raw`printf "\${SEP}\${TOKEN_COLOR}in:%sk out:%sk\${RESET}" "$input_k" "$output_k"`
   }
 
   const dirDisplay = prefix.char
@@ -73,12 +73,12 @@ export function generateScript(state: ConfigState): string {
 }`
   }
   else if (state.barColorMode === 'gradient') {
-    getProgressColorFn = `get_progress_color() {
+    getProgressColorFn = String.raw`get_progress_color() {
     local p=$1
     local hue=$(( 240 - p * 180 / 100 ))
-    printf "\\033[38;2;%d;%d;%dm" \\
-      "$(( 128 + p * 127 / 100 ))" \\
-      "$(( 128 - p * 64 / 100 ))" \\
+    printf "\033[38;2;%d;%d;%dm" \
+      "$(( 128 + p * 127 / 100 ))" \
+      "$(( 128 - p * 64 / 100 ))" \
       "$(( 255 - p * 200 / 100 ))"
 }`
   }
@@ -104,26 +104,21 @@ export function generateScript(state: ConfigState): string {
 
   const a = color.ansi
 
-  const script = `
+  const script = String.raw`
 JSON_INPUT=$(cat)
 
-model=$(echo "$JSON_INPUT" | jq -r '.model.display_name // "Claude"')
-input=$(echo "$JSON_INPUT" | jq -r '.context_window.total_input_tokens // 0')
-output=$(echo "$JSON_INPUT" | jq -r '.context_window.total_output_tokens // 0')
-percent=$(echo "$JSON_INPUT" | jq -r '.context_window.used_percentage // 0')
-cwd=$(echo "$JSON_INPUT" | jq -r '.cwd // (.workspace.current_dir // "")')
 
-MODEL_COLOR="\\033[38;5;${a.model}m"
-RESET="\\033[0m"
-PROGRESS_BAR="\\033[38;5;${a.bar}m"
-PROGRESS_LOW="\\033[38;5;${a.low}m"
-PROGRESS_MID="\\033[38;5;${a.mid}m"
-PROGRESS_HIGH="\\033[38;5;${a.high}m"
-TOKEN_COLOR="\\033[38;5;${a.token}m"
-DIR_COLOR="\\033[38;5;${a.low}m"
-GIT_COLOR="\\033[38;5;${a.model}m"
-GIT_CLEAN="\\033[38;5;${a.low}m"
-GIT_DIRTY="\\033[38;5;${a.high}m"
+MODEL_COLOR="\033[38;5;${a.model}m"
+RESET="\033[0m"
+PROGRESS_BAR="\033[38;5;${a.bar}m"
+PROGRESS_LOW="\033[38;5;${a.low}m"
+PROGRESS_MID="\033[38;5;${a.mid}m"
+PROGRESS_HIGH="\033[38;5;${a.high}m"
+TOKEN_COLOR="\033[38;5;${a.token}m"
+DIR_COLOR="\033[38;5;${a.low}m"
+GIT_COLOR="\033[38;5;${a.model}m"
+GIT_CLEAN="\033[38;5;${a.low}m"
+GIT_DIRTY="\033[38;5;${a.high}m"
 
 PROGRESS_FILLED="${pStyle.filled}"
 PROGRESS_EMPTY="${pStyle.empty}"
@@ -134,7 +129,7 @@ ${getProgressColorFn}
 ${modelFormatFn}
 
 ${pStyle.gradient
-  ? `get_progress_bar() {
+  ? String.raw`get_progress_bar() {
     local p=$1
     local filled=$((p / 10))
     local empty=$((10 - filled))
@@ -147,13 +142,13 @@ ${pStyle.gradient
     fi
     echo "$bar"
 }`
-  : `get_progress_bar() {
+  : String.raw`get_progress_bar() {
     local p=$1
     local filled=$((p / 10))
     local empty=$((10 - filled))
     local bar=""
-    for ((i=0; i<filled; i++)); do bar+="\\\${PROGRESS_FILLED}"; done
-    for ((i=0; i<empty; i++)); do bar+="\\\${PROGRESS_EMPTY}"; done
+    for ((i=0; i<filled; i++)); do bar+="\${PROGRESS_FILLED}"; done
+    for ((i=0; i<empty; i++)); do bar+="\${PROGRESS_EMPTY}"; done
     echo "$bar"
 }`}
 
@@ -162,7 +157,7 @@ get_directory() {
     local parent=$(basename "$(dirname "$dir")")
     local current=$(basename "$dir")
     if [[ "$parent" == "/" || -z "$parent" ]]; then
-        ${prefix.char ? `echo "${prefix.char}\\\${current}"` : `echo "~/\\\${current}"`}
+        ${prefix.char ? String.raw`echo "${prefix.char}\${current}"` : String.raw`echo "~/\${current}"`}
     else
         ${dirDisplay}
     fi
@@ -195,24 +190,24 @@ output_k=$(format_tokens "$output")
 model_name=$(format_model "$model")
 
 ${isDouble
-  ? `
-printf "\\\${MODEL_COLOR}[\\\${model_name}]\\\${RESET}"
-printf "\\\${SEP}\\\${bar_color}\\\${progress_bar} \\\${percent}%%\\\${RESET}"
+  ? String.raw`
+printf "\${MODEL_COLOR}[\${model_name}]\${RESET}"
+printf "\${SEP}\${bar_color}\${progress_bar} \${percent}%%\${RESET}"
 ${tokenPrintf}
-printf "\\n"
+printf "\n"
 
 
-printf "\\\${DIR_COLOR}\\\${directory}\\\${RESET}"
+printf "\${DIR_COLOR}\${directory}\${RESET}"
 ${state.gitShow
-    ? `if [[ -n "$cwd" ]]; then
+    ? String.raw`if [[ -n "$cwd" ]]; then
     git_branch=$(get_git_branch "$cwd")
     if [[ -n "$git_branch" ]]; then
         git_status=$(get_git_status "$cwd")
-        printf " \\\${GIT_COLOR}${gitBranchFmt}\\\${RESET}"
+        printf " \${GIT_COLOR}${gitBranchFmt}\${RESET}"
         if [[ "$git_status" == "clean" ]]; then
-            printf " \\\${GIT_CLEAN}✓\\\${RESET}"
+            printf " \${GIT_CLEAN}✓\${RESET}"
         else
-            printf " \\\${GIT_DIRTY}✗\\\${RESET}"
+            printf " \${GIT_DIRTY}✗\${RESET}"
             read added modified untracked <<< "$(get_git_counts "$cwd")"
             ${gitCountsFmt}
         fi
@@ -221,18 +216,18 @@ fi`
     : ''
 }
 `
-  : `
-printf "\\\${MODEL_COLOR}[\\\${model_name}]\\\${RESET}"
-printf "\\\${SEP}\\\${bar_color}\\\${progress_bar} \\\${percent}%%\\\${RESET}"
-printf "\\\${SEP}\\\${DIR_COLOR}\\\${directory}\\\${RESET}"
+  : String.raw`
+printf "\${MODEL_COLOR}[\${model_name}]\${RESET}"
+printf "\${SEP}\${bar_color}\${progress_bar} \${percent}%%\${RESET}"
+printf "\${SEP}\${DIR_COLOR}\${directory}\${RESET}"
 ${state.gitShow
-    ? `if [[ -n "$cwd" ]]; then
+    ? String.raw`if [[ -n "$cwd" ]]; then
     git_branch=$(get_git_branch "$cwd")
     if [[ -n "$git_branch" ]]; then
         git_status=$(get_git_status "$cwd")
-        printf " \\\${GIT_COLOR}${gitBranchFmt}\\\${RESET}"
+        printf " \${GIT_COLOR}${gitBranchFmt}\${RESET}"
         if [[ "$git_status" != "clean" ]]; then
-            printf " \\\${GIT_DIRTY}✗\\\${RESET}"
+            printf " \${GIT_DIRTY}✗\${RESET}"
             read added modified untracked <<< "$(get_git_counts "$cwd")"
             ${gitCountsFmt}
         fi
@@ -240,7 +235,8 @@ ${state.gitShow
 fi`
     : ''
 }
-`}`
+`}
+`
 
   return script
 }
