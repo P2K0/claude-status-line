@@ -3,8 +3,34 @@
 @tailwind utilities;
 
 @layer base {
+
+  :root {
+    --background: #ffffff;
+    --foreground: #09090b;
+    --card-bg: #ffffff;
+    --panel-bg: #f4f4f5;
+    --border: #e4e4e7;
+    --muted: #f4f4f5;
+    --muted-foreground: #71717a;
+    --accent: #f4f4f5;
+    --accent-foreground: #09090b;
+  }
+
+
+  .dark {
+    --background: #09090b;
+    --foreground: #fafafa;
+    --card-bg: #18181b;
+    --panel-bg: #09090b;
+    --border: #27272a;
+    --muted: #27272a;
+    --muted-foreground: #a1a1aa;
+    --accent: #27272a;
+    --accent-foreground: #fafafa;
+  }
+
   html, body {
-    @apply antialiased select-none;
+    @apply antialiased select-none bg-background text-foreground;
     -webkit-user-drag: none;
     user-drag: none;
     overscroll-behavior: none;

@@ -1,5 +1,5 @@
-/** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     './index.html',
     './src/**/*.{js,ts,jsx,tsx}',
@@ -7,6 +7,24 @@ export default {
   theme: {
     extend: {
       colors: {
+        background: 'var(--background)',
+        foreground: 'var(--foreground)',
+        border: 'var(--border)',
+        card: {
+          DEFAULT: 'var(--card-bg)',
+          foreground: 'var(--foreground)',
+        },
+        panel: {
+          DEFAULT: 'var(--panel-bg)',
+        },
+        muted: {
+          DEFAULT: 'var(--muted)',
+          foreground: 'var(--muted-foreground)',
+        },
+        accent: {
+          DEFAULT: 'var(--accent)',
+          foreground: 'var(--accent-foreground)',
+        },
         stone: {
           900: '#1c1917',
           800: '#292524',
