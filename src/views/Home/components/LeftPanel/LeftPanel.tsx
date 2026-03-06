@@ -2,12 +2,16 @@ import type { CSSProperties } from 'react'
 import { Copy, PlusCircle } from 'lucide-react'
 import { useState } from 'react'
 import {
+  barColorModes,
   colorPresets,
   dirPrefixes,
+  gitModes,
   gitPrefixes,
   layoutModes,
+  modelFormats,
   progressStyles,
   separators,
+  tokenFormats,
 } from '@/constants'
 import { useConfig } from '@/hooks/useConfig'
 import { useLanguage } from '@/hooks/useLanguage'
@@ -76,10 +80,16 @@ json.dump(s, open(p, "w"), indent=2, ensure_ascii=False)
     tokenDisplay = 'in:216k out:15k'
   }
 
-  const dirPfx = dirPrefixes.find(p => p.id === config.dirPrefix)?.char || ''
-  const gitPfx = gitPrefixes.find(p => p.id === config.gitPrefix)?.char || ''
+  const dirPfxItem = dirPrefixes.find(p => p.id === config.dirPrefix)
+  const dirPfx = dirPfxItem?.char || ''
+
+  const gitPfxItem = gitPrefixes.find(p => p.id === config.gitPrefix)
+  const gitPfx = gitPfxItem?.char || ''
+
   const sepItem = separators.find(s => s.id === config.separator)
-  const sepNode = sepItem && sepItem.id !== 'space' ? <span className="opacity-40">{sepItem.char}</span> : null
+  const sepChar = sepItem?.char || ''
+  const isSpaceSep = sepItem?.id === 'space'
+  const sepNode = !isSpaceSep ? <span className="opacity-40 select-none mx-0.5">{sepChar}</span> : <span className="mx-1"> </span>
 
   let barColorStyle: CSSProperties = { color: cPreset.bar }
   if (config.barColorMode === 'dynamic') {
@@ -93,53 +103,44 @@ json.dump(s, open(p, "w"), indent=2, ensure_ascii=False)
     }
   }
 
-  let gitDisplay = (
-    <>
-      <span style={{ color: cPreset.high }}>✗</span>
-      <span style={{ color: cPreset.low }}>+3</span>
-      <span style={{ color: cPreset.mid }}>~2</span>
-      <span style={{ color: cPreset.token }}>?1</span>
-    </>
-  )
-  if (config.gitMode === 'short') {
-    gitDisplay = (
-      <>
-        <span style={{ color: cPreset.high }}>A3</span>
-        <span style={{ color: cPreset.mid }}>M2</span>
-        <span style={{ color: cPreset.token }}>?1</span>
-      </>
-    )
-  }
-  else if (config.gitMode === 'detailed') {
-    gitDisplay = (
-      <span style={{ color: cPreset.mid }}>3 new, 2 modified</span>
-    )
-  }
-
-  let btnClass = isLight
-    ? 'bg-black text-white hover:bg-zinc-800 active:bg-zinc-900'
-    : 'bg-white text-black hover:bg-zinc-200 active:bg-zinc-300'
+  let btnClass = 'bg-foreground text-background hover:opacity-90 active:opacity-80'
   if (copied) {
     btnClass = 'bg-emerald-500 text-white'
   }
 
+  const getThemeColor = (color: string, type: 'model' | 'low' | 'mid' | 'high' | 'token' | 'bar') => {
+    if (isLight) {
+      switch (type) {
+        case 'model': return '#4a148c'
+        case 'low': return '#1b5e20'
+        case 'mid': return '#e65100'
+        case 'high': return '#b71c1c'
+        case 'token': return '#333333'
+        case 'bar': return '#01579b'
+        default: return color
+      }
+    }
+    else {
+      switch (type) {
+        case 'mid': return '#ffd54f'
+        case 'token': return '#e0e0e0'
+        default: return color
+      }
+    }
+  }
+
   return (
-    <main className={`flex-1 h-full flex flex-col items-center justify-center p-8 transition-colors duration-200 ${
-      isLight ? 'bg-zinc-50' : 'bg-[#000000]'
-    }`}
-    >
+    <main className="flex-1 h-full flex flex-col items-center justify-center p-8 transition-colors duration-300 bg-panel">
       <div className="flex-1 flex flex-col justify-center max-w-[480px] mx-auto w-full">
 
-        <div className={`w-full rounded-xl overflow-hidden border mb-8 transition-colors duration-200
-          ${isLight ? 'bg-white border-zinc-200 shadow-sm' : 'bg-black border-zinc-800'}`}
-        >
+        <div className="w-full rounded-xl overflow-hidden border mb-8 transition-colors duration-200 bg-card border-border shadow-sm">
 
-          <div className={`flex items-center px-4 py-3 border-b ${isLight ? 'bg-zinc-50 border-zinc-200' : 'bg-zinc-900/30 border-zinc-800'}`}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`lucide lucide-terminal ${isLight ? 'text-zinc-500' : 'text-zinc-600'}`}>
+          <div className="flex items-center px-4 py-3 border-b transition-colors duration-300 bg-muted/30 border-border">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-terminal transition-colors text-muted-foreground">
               <polyline points="4 17 10 11 4 5" />
               <line x1="12" x2="20" y1="19" y2="19" />
             </svg>
-            <span className={`ml-2 text-xs font-mono font-medium ${isLight ? 'text-zinc-600' : 'text-zinc-400'}`}>
+            <span className="ml-2 text-xs font-mono font-medium transition-colors text-muted-foreground">
               ~/claude-code
             </span>
             <div className="ml-auto flex gap-1.5 items-center">
@@ -149,9 +150,9 @@ json.dump(s, open(p, "w"), indent=2, ensure_ascii=False)
             </div>
           </div>
 
-          <div className={`p-5 font-mono text-[13px] leading-relaxed min-h-[90px] ${isLight ? 'text-zinc-800' : 'text-[#e2e8f0]'}`}>
+          <div className={`p-5 font-mono text-[13px] leading-relaxed min-h-[90px] ${isLight ? 'text-slate-900' : 'text-zinc-100'}`}>
             <div className="flex items-center flex-wrap gap-x-2 gap-y-1">
-              <span style={{ color: cPreset.model }}>
+              <span style={{ color: getThemeColor(cPreset.model, 'model') }}>
                 [
                 {config.modelFormat === 'icon' ? '🤖 ' : ''}
                 {modelDisplay}
@@ -160,7 +161,7 @@ json.dump(s, open(p, "w"), indent=2, ensure_ascii=False)
 
               {sepNode}
 
-              <span style={barColorStyle}>
+              <span style={isLight && config.barColorMode === 'static' ? { color: getThemeColor(cPreset.bar, 'bar') } : barColorStyle}>
                 {pStyle.filled.repeat(3)}
                 <span className="opacity-40">
                   {'gradient' in pStyle && pStyle.gradient ? '▓▒░░░░░' : pStyle.empty.repeat(7)}
@@ -170,21 +171,23 @@ json.dump(s, open(p, "w"), indent=2, ensure_ascii=False)
 
               {sepNode}
 
-              <span style={{ color: cPreset.token }}>
+              <span style={{ color: getThemeColor(cPreset.token, 'token') }}>
                 {tokenDisplay}
               </span>
+
+              {config.layoutMode === 'single' && sepNode}
 
               {config.layoutMode === 'single' && (
                 <>
                   {sepNode}
-                  <span style={{ color: cPreset.low }}>
+                  <span style={{ color: getThemeColor(cPreset.low, 'low') }}>
                     {dirPfx && <span className="mr-1">{dirPfx}</span>}
                     ~/claude-code
                   </span>
 
                   {sepNode}
 
-                  <span style={{ color: cPreset.mid }}>
+                  <span style={{ color: getThemeColor(cPreset.mid, 'mid') }}>
                     {gitPfx && <span className="mr-1">{gitPfx}</span>}
                     (main)
                   </span>
@@ -192,24 +195,43 @@ json.dump(s, open(p, "w"), indent=2, ensure_ascii=False)
                   {sepNode}
 
                   <span className="flex items-center gap-1.5">
-                    {gitDisplay}
+                    {config.gitMode === 'short'
+                      ? (
+                          <>
+                            <span style={{ color: getThemeColor(cPreset.high, 'high') }}>A3</span>
+                            <span style={{ color: getThemeColor(cPreset.low, 'low') }}>M2</span>
+                            <span style={{ color: getThemeColor(cPreset.token, 'token') }}>?1</span>
+                          </>
+                        )
+                      : config.gitMode === 'detailed'
+                        ? (
+                            <span style={{ color: getThemeColor(cPreset.token, 'token') }}>3 new, 2 modified</span>
+                          )
+                        : (
+                            <>
+                              <span style={{ color: getThemeColor(cPreset.high, 'high') }}>✗</span>
+                              <span style={{ color: getThemeColor(cPreset.low, 'low') }}>+3</span>
+                              <span style={{ color: getThemeColor(cPreset.mid, 'mid') }}>~2</span>
+                              <span style={{ color: getThemeColor(cPreset.token, 'token') }}>?1</span>
+                            </>
+                          )}
                   </span>
 
-                  <span className={`inline-block w-[6px] h-[13px] ml-1.5 align-middle animate-blink ${isLight ? 'bg-black' : 'bg-white'}`} style={{ animation: 'blink 1.2s step-end infinite' }} />
+                  <span className="inline-block w-[6px] h-[13px] ml-1.5 align-middle animate-blink bg-foreground" style={{ animation: 'blink 1.2s step-end infinite' }} />
                 </>
               )}
             </div>
 
             {config.layoutMode !== 'single' && (
               <div className="flex items-center flex-wrap gap-x-2 gap-y-1 mt-1">
-                <span style={{ color: cPreset.low }}>
+                <span style={{ color: getThemeColor(cPreset.low, 'low') }}>
                   {dirPfx && <span className="mr-1">{dirPfx}</span>}
                   ~/claude-code
                 </span>
 
                 {sepNode}
 
-                <span style={{ color: cPreset.mid }}>
+                <span style={{ color: getThemeColor(cPreset.mid, 'mid') }}>
                   {gitPfx && <span className="mr-1">{gitPfx}</span>}
                   (main)
                 </span>
@@ -217,20 +239,51 @@ json.dump(s, open(p, "w"), indent=2, ensure_ascii=False)
                 {sepNode}
 
                 <span className="flex items-center gap-1.5">
-                  {gitDisplay}
+                  {config.gitMode === 'short'
+                    ? (
+                        <>
+                          <span style={{ color: getThemeColor(cPreset.high, 'high') }}>A3</span>
+                          <span style={{ color: getThemeColor(cPreset.low, 'low') }}>M2</span>
+                          <span style={{ color: getThemeColor(cPreset.token, 'token') }}>?1</span>
+                        </>
+                      )
+                    : config.gitMode === 'detailed'
+                      ? (
+                          <span style={{ color: getThemeColor(cPreset.token, 'token') }}>3 new, 2 modified</span>
+                        )
+                      : (
+                          <>
+                            <span style={{ color: getThemeColor(cPreset.high, 'high') }}>✗</span>
+                            <span style={{ color: getThemeColor(cPreset.low, 'low') }}>+3</span>
+                            <span style={{ color: getThemeColor(cPreset.mid, 'mid') }}>~2</span>
+                            <span style={{ color: getThemeColor(cPreset.token, 'token') }}>?1</span>
+                          </>
+                        )}
                 </span>
 
-                <span className={`inline-block w-[6px] h-[13px] ml-1.5 align-middle animate-blink ${isLight ? 'bg-black' : 'bg-white'}`} style={{ animation: 'blink 1.2s step-end infinite' }} />
+                <span className="inline-block w-[6px] h-[13px] ml-1.5 align-middle animate-blink bg-foreground" style={{ animation: 'blink 1.2s step-end infinite' }} />
               </div>
             )}
           </div>
 
-          <div className={`px-4 py-2 border-t text-[10px] font-mono flex gap-3 flex-wrap ${isLight ? 'bg-zinc-50 border-zinc-200 text-zinc-500' : 'bg-zinc-900/20 border-zinc-800/50 text-zinc-600'}`}>
-            <span>{t(`constants.${pStyle.name}`, { defaultValue: pStyle.name })}</span>
-            <span>·</span>
-            <span>{t(`constants.${cPreset.name}`, { defaultValue: cPreset.name })}</span>
-            <span>·</span>
-            <span>{t(`constants.${selectedPreviewLayout}`, { defaultValue: selectedPreviewLayout })}</span>
+          <div className={`px-4 py-2 border-t text-[9px] font-mono flex gap-x-2.5 gap-y-1.5 flex-wrap bg-muted/20 border-border ${isLight ? 'text-slate-800' : 'text-muted-foreground/80'}`}>
+            {[
+              t(`constants.${pStyle.name}`, { defaultValue: pStyle.name }),
+              t(`constants.${cPreset.name}`, { defaultValue: cPreset.name }),
+              t(`constants.${selectedPreviewLayout}`, { defaultValue: selectedPreviewLayout }),
+              t(`constants.${separators.find(s => s.id === config.separator)?.name}`, { defaultValue: 'Space' }),
+              t(`constants.${modelFormats.find(f => f.id === config.modelFormat)?.name}`, { defaultValue: 'Model' }),
+              t(`constants.${barColorModes.find(m => m.id === config.barColorMode)?.name}`, { defaultValue: 'Bar' }),
+              t(`constants.${tokenFormats.find(f => f.id === config.tokenFormat)?.name}`, { defaultValue: 'Token' }),
+              t(`constants.${dirPrefixes.find(p => p.id === config.dirPrefix)?.name}`, { defaultValue: 'Dir' }),
+              t(`constants.${gitPrefixes.find(p => p.id === config.gitPrefix)?.name}`, { defaultValue: 'Git' }),
+              t(`constants.${gitModes.find(m => m.id === config.gitMode)?.name}`, { defaultValue: 'Mode' }),
+            ].map((label, idx, arr) => (
+              <div key={`${label}-${idx}`} className="flex items-center gap-2.5">
+                <span className="truncate max-w-[80px]">{label}</span>
+                {idx < arr.length - 1 && <span className="opacity-20 select-none">·</span>}
+              </div>
+            ))}
           </div>
         </div>
 
@@ -255,10 +308,17 @@ json.dump(s, open(p, "w"), indent=2, ensure_ascii=False)
               )}
         </button>
 
-        <div className="mt-5 text-xs leading-relaxed text-zinc-500 text-center">
+        <div className="mt-5 text-xs leading-relaxed text-muted-foreground text-center">
           {t('left.guide1')}
           {' '}
-          <code className={`px-1.5 py-0.5 rounded text-[11px] mx-0.5 ${isLight ? 'bg-zinc-100 text-zinc-700' : 'bg-zinc-900 text-zinc-300'}`}>Statusline installed!</code>
+          <code className={`px-1.5 py-0.5 rounded-md text-[11px] mx-0.5 font-mono border transition-colors ${
+            isLight
+              ? 'bg-slate-100 border-slate-300 text-slate-900 shadow-sm'
+              : 'bg-zinc-800/80 border-zinc-700 text-zinc-100'
+          }`}
+          >
+            Statusline installed!
+          </code>
           {' '}
           {t('left.guide2')}
         </div>
