@@ -39,7 +39,9 @@
     "copy": "复制安装命令",
     "copied": "已复制安装命令",
     "guide1": "在终端粘贴执行，看到",
-    "guide2": "即安装成功，重启 Claude Code 生效。"
+    "guide2": "即安装成功，重启 Claude Code 生效。",
+    "reset": "恢复默认配置",
+    "resetCopied": "恢复命令已复制"
   },
   "constants": {
     "None": "无",

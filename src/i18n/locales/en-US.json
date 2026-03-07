@@ -39,7 +39,9 @@
     "copy": "Copy install command",
     "copied": "Install command copied",
     "guide1": "Paste and run in terminal. You will see",
-    "guide2": "indicating a successful installation. Restart Claude Code to apply."
+    "guide2": "indicating a successful installation. Restart Claude Code to apply.",
+    "reset": "Reset to default",
+    "resetCopied": "Reset command copied"
   },
   "constants": {
     "None": "None",

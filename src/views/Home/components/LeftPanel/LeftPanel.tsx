@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react'
-import { Copy, PlusCircle } from 'lucide-react'
+import { Copy, PlusCircle, RotateCcw } from 'lucide-react'
 import { useState } from 'react'
 import {
   barColorModes,
@@ -22,6 +22,7 @@ export function LeftPanel() {
   const { config } = useConfig()
   const { t } = useLanguage()
   const [copied, setCopied] = useState(false)
+  const [resetCopied, setResetCopied] = useState(false)
   const isLight = config.previewMode === PreviewModeEnum.Light
 
   const pStyle = progressStyles.find(s => s.id === config.progressStyle) || progressStyles[0]
@@ -61,6 +62,28 @@ json.dump(s, open(p, "w"), indent=2, ensure_ascii=False)
     navigator.clipboard.writeText(installCmd).then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
+    })
+  }
+
+  const handleReset = () => {
+    const resetPy = `
+import json, os
+p = os.path.expanduser("~/.claude/settings.json")
+if os.path.exists(p):
+    s = json.load(open(p))
+    s.pop("statusLine", None)
+    json.dump(s, open(p, "w"), indent=2, ensure_ascii=False)
+sh = os.path.expanduser("~/.claude/statusline.sh")
+if os.path.exists(sh): os.remove(sh)
+print("Statusline removed!")
+`.trim()
+
+    const resetPyB64 = btoa(resetPy)
+    const resetCmd = `echo '${resetPyB64}' | base64 -d | python3`
+
+    navigator.clipboard.writeText(resetCmd).then(() => {
+      setResetCopied(true)
+      setTimeout(() => setResetCopied(false), 2000)
     })
   }
 
@@ -306,6 +329,18 @@ json.dump(s, open(p, "w"), indent=2, ensure_ascii=False)
                   {t('left.copy')}
                 </>
               )}
+        </button>
+
+        <button
+          onClick={handleReset}
+          className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 text-xs font-medium rounded-md cursor-pointer transition-colors mt-2 ${
+            resetCopied
+              ? 'bg-emerald-50 text-emerald-600 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20'
+              : 'bg-card border border-border text-foreground/80 hover:text-foreground hover:bg-muted'
+          }`}
+        >
+          <RotateCcw size={14} />
+          {resetCopied ? t('left.resetCopied') : t('left.reset')}
         </button>
 
         <div className="mt-5 text-xs leading-relaxed text-muted-foreground text-center">
